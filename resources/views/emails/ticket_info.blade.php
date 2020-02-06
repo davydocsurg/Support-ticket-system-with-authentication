@@ -12,11 +12,12 @@
     </p>
 
     <p>Title: {{ $ticket->title }}</p>
+    
     <p>Priority: {{ $ticket->priority }}</p>
     <p>Status: {{ $ticket->status }}</p>
 
     <p>
-        You can view the ticket at any time at {{ url('tickets/'. $ticket->ticket_id) }}
+        You can view the ticket at any time at {{ url('tickets/'. $ticket->slug) }}
     </p>
 </body>
 </html>

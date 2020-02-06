@@ -3,9 +3,10 @@
 @section('title', 'Open Ticket')
 
 @section('content')
-    <div class="row justify-content-center">
-        <div class="col-md-10 col-md-offset-1">
-            <div class="card ">
+   
+    <div class="container col-md-6 col-lg-8 col-sm-2">
+        <div class="row justify-content-center">
+            <div class="card mt-5">
                 <div class="card-header">Open New Ticket</div>
 
                 <div class="card-body">

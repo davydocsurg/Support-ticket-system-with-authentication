@@ -9,7 +9,7 @@
       <div class="card ">
          <div class='card-header'>Tickets</div>
          <div class='card-body'>
-          <table class="table table-bordered" id="">
+          <table class="table " id="">
            <thead>
               <tr>
                  <th>Category</th>
@@ -21,9 +21,9 @@
            <tbody>
               @foreach($tickets as $ticket)
               <tr>
-                 <td>{{ $ticket->category }}</td>
+                 <td>{{ $ticket->category->name }}</td>
                  <td>{{ $ticket->title }}</td>
-                 <td><a href="{{ action('TicketsController@show', $ticket->ticket_id) }}" class='btn btn-primary'>{{ $ticket->status }}</a></td>
+                 <td><a href="{{ action('TicketsController@show', $ticket->slug) }}" class='btn btn-success'>{{ $ticket->status ? 'Open' : 'Closed'}}</a></td>
                  <td>{{ date('Y-m-d', strtotime ($ticket->created_at)) }}</td>
                
               </tr>

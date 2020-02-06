@@ -12,9 +12,12 @@
             </div>
             <div class="card-body">
                 <p> <strong>Status</strong>: {{ $ticket->status ? 'Open' : 'Closed' }}</p>
-                <p> {{ $ticket->content }} </p>
-                <a href="{{ action('TicketsController@edit', $ticket->ticket_id) }}" class="btn btn-info float-left mr-2">Edit</a>
-                <form method="post" action="{{ action('TicketsController@destroy', $ticket->ticket_id) }}" class="float-left">
+                <p> <strong>Category</strong>: {{ $ticket->category->name }} </p>
+                <p> <strong>Priority</strong>: {{ $ticket->priority }} </p>
+                <p> <strong>Message</strong>: {{ $ticket->message }} </p>
+
+                <a href="{{ action('TicketsController@edit', $ticket->slug) }}" class="btn btn-info float-left mr-2">Edit</a>
+                <form method="post" action="{{ action('TicketsController@destroy', $ticket->slug) }}" class="float-left">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div>
                         <button type="submit" class="btn btn-warning">Delete</button>

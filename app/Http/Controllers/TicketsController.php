@@ -25,19 +25,31 @@ class TicketsController extends Controller
         return view('tickets.create', compact('categories'));
     }
 
-    public function store(Request $request, AppMailer $mailer)
+    public function store(TicketFormRequest $request, AppMailer $mailer)
     {
-    $this->validate($request, [
+
+        $this->validate($request, [
             'title'     => 'required',
             'category'  => 'required',
             'priority'  => 'required',
             'message'   => 'required'
         ]);
 
+        $slug = uniqid();
+        $ticket = new Ticket(array(
+        'title' => $request->get('title'),
+        'category' => $request->get('category'),
+        'priority' => $request->get('priority'),
+        'slug' => $slug
+        ));
+
+  
+
         $ticket = new Ticket([
+            
             'title'     => $request->input('title'),
             'user_id'   => Auth::user()->id,
-            'ticket_id' => strtoupper(str_random(10)),
+            'slug' => $slug,
             'category_id'  => $request->input('category'),
             'priority'  => $request->input('priority'),
             'message'   => $request->input('message'),
@@ -48,28 +60,29 @@ class TicketsController extends Controller
 
         $mailer->sendTicketInformation(Auth::user(), $ticket);
 
-        return redirect()->back()->with("status", "A ticket with ID: #$ticket->ticket_id has been opened.");
+        return redirect()->back()->with("status", "Your ticket has been opened, you can view it via your email. Its ID is "  .$slug );
     }
 
-    public function show($ticket_id)
+    public function show($slug)
     {
-        $ticket = Ticket::whereTicket_Id($ticket_id)->firstOrFail();
+        $ticket = Ticket::whereSlug($slug)->firstOrFail();
         // $comments = $ticket->comments()->get();
         return view('tickets.show', compact('ticket'));
     }
     
-    public function edit($ticket_id)
+    public function edit($slug)
     {
-        $ticket = Ticket::whereTicket_id($ticket_id)->firstOrFail();
+        $ticket = Ticket::whereSlug($slug)->firstOrFail();
 
         return view('tickets.edit', compact('ticket'));
     }
 
-    public function update($ticket_id, TicketFormRequest $request)
+    public function update($slug, TicketFormRequest $request)
     {
-        $ticket = Ticket::whereTicket_id($ticket_id)->firstOrFail();
+        $ticket = Ticket::whereSlug($slug)->firstOrFail();
         $ticket->title = $request->get('title');
-        $ticket->content = $request->get('content');
+        $ticket->priority = $request->get('priority');
+        $ticket->message = $request->get('message');
         if($request->get('status') != null) {
         $ticket->status = 0;
     } 
@@ -77,19 +90,17 @@ class TicketsController extends Controller
         $ticket->status = 1;
     }
     $ticket->save();
-    return redirect(action('TicketsController@edit', $ticket->ticket_id))->with('status', 'The ticket '.$ticket_id.' has been updated!');
+    return redirect(action('TicketsController@edit', $ticket->slug))->with('status', 'The ticket '.$slug.' has been updated!');
     
     }
 
-    public function destroy($ticket_id)
+    public function destroy($slug)
     {
-        $ticket = Ticket::whereTicket_id($ticket_id)->firstOrFail();
+        $ticket = Ticket::whereSlug($slug)->firstOrFail();
         $ticket->delete();
+        return redirect('/tickets')->with('status', 'Your ticket '.$slug.' has been deleted!');
 
-          $data = array(
-            'ticket' => $ticket_id,
-        ); 
-        return redirect('/tickets')->with('status', 'The ticket '.$ticket_id.' has been deleted!');
+    }
 
-}
+
 }
